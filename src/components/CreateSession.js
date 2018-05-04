@@ -7,9 +7,12 @@ import
 } from "react-bootstrap";
 import querystring from "querystring";
 
-var client_id = 'f18adfa22eb64b1b9a74ce823ca80b3b'; // Your client id
-var redirect_uri = 'http://localhost:3000/CreateSession'; // Your redirect uri
-var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
+// Your client id
+var client_id = 'f18adfa22eb64b1b9a74ce823ca80b3b';
+// Your redirect uri
+var redirect_uri = 'http://localhost:3000/CreateSession';
+//scope for token
+var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private playlist-read-collaborative';
 
 
 
@@ -41,21 +44,27 @@ class CreateSession extends React.Component
 
     // }
 
+    // do when component gets mounted
     componentDidMount()
     {
-
-            this.getHashParams();
+        // - Hashed token received in the URL after being redirected from when signing in
+        // - call getHashParams to get parse values in the URL
+        this.getHashParams();
         
     }
+
+    // create props instance
     constructor(props)
     {
         super(props)
         this.state = {
             headerText: "",
-            userData: {}
+            userData: {},
+            view: ""
         }
     }
 
+    // get hashed token from URL and convert to text in JSON
     getHashParams()
     {
         var hashParams = {};
@@ -72,11 +81,12 @@ class CreateSession extends React.Component
         }
         console.log(hashParams);
         const headerText = `${hashParams.token_type} ${hashParams.access_token}`;
-        this.setState({ headerText })
+        this.setState({ headerText });
         this.callApi(headerText);
         return hashParams;
     }
 
+    // - API: call api to get a snapshot of the users profile
     async callApi(headerText)
     {
         console.log(headerText);
@@ -90,7 +100,31 @@ class CreateSession extends React.Component
             const json = await response.json()
             this.setState({ userData: json });
         }
+        console.log(this.state.userData);
     }
+
+    // API: use the API to create a collaborative playlist
+    async createPlaylist(headerText)
+    {
+        const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists`, {
+            method: 'POST',
+            headers: {
+                'Authorization': headerText,
+                'Content-type': "application/json",
+            },
+            body: JSON.stringify({
+                collaborative: true,
+                name: 'made from app',
+                description: 'using api',
+                public: false
+
+            })
+        });
+        const json = await response.json();
+        console.log(json);
+    }
+
+
 
     render()
     { 
@@ -99,9 +133,28 @@ class CreateSession extends React.Component
         
         if (Object.keys(this.state.userData).length > 0)
         {
-            return (
-                <div>{this.state.userData.email}</div>
-            );
+            console.log(this.state.view)
+            switch (this.state.view)
+            {
+                case 'CreateSessionView':
+                    return (
+                        <div>In CreateSessionView</div>
+                    );
+                default:
+                   return (
+                        <div>
+                            {this.state.userData.email}
+                            <Button
+                                onClick={() =>
+                               {
+                                   this.state.view = 'CreateSessionView';
+                                   this.createPlaylist(this.state.headerText);
+                                   this.render();
+                                }}>Create a playlist</Button>
+                        </div>
+            ); 
+            }
+            
         } 
 
         return (
