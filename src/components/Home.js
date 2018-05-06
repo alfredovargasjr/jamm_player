@@ -57,9 +57,11 @@ class Home extends React.Component
                                         <Panel.Title style={styles.centerWhiteBold} toggle><b>Create a Session</b></Panel.Title>
                                     </Panel.Heading>
                                     <Panel.Body collapsible>Create a Session
-                                            <Button bsSize="large" block>
-                                                <LinkContainer to="/CreateSession"><a> create</a></LinkContainer>
-                                            </Button>
+                                            <LinkContainer to="/CreateSession">
+                                                <Button bsSize="large" block>
+                                                    <h4>Create</h4>
+                                                </Button>
+                                            </LinkContainer>
                                         </Panel.Body>
                                     
                             </Panel>
@@ -68,15 +70,17 @@ class Home extends React.Component
                                         <Panel.Title style={styles.centerWhiteBold} toggle><b>Join a Session</b></Panel.Title>
                                 </Panel.Heading>
                                     <Panel.Body collapsible>Join a Session
+                                            <LinkContainer to="/JoinSession">
                                         <Button bsSize="large" block>
-                                            <LinkContainer to="/JoinSession"><a>Join</a></LinkContainer>
+                                                <h4>Join</h4>
                                         </Button>    
+                                            </LinkContainer>
                                     </Panel.Body>
                             </Panel>
                             </PanelGroup>
                         </Col>
                     </Row>
-                    </Grid> 
+                </Grid> 
             </div>
         );
     }
