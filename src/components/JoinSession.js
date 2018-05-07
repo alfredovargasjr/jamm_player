@@ -21,7 +21,7 @@ var client_id = 'f18adfa22eb64b1b9a74ce823ca80b3b';
 // Your redirect uri
 var redirect_uri = 'http://localhost:3000/JoinSession';
 //scope for token
-var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private playlist-read-collaborative';
+var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private playlist-read-collaborative playlist-read-private';
 
 /**
  * Generates a random string containing numbers and letters
@@ -91,6 +91,7 @@ class JoinSession extends React.Component
         {
             super(props);
             this.state = {
+                headerText: "",
                 view: '',
                 userData: {},
                 hostID: '',
@@ -217,14 +218,15 @@ class JoinSession extends React.Component
     // - API: follow a playlist, need to follow a collaboraive playlist to add a song
     async getPlaylist(headerText, playlistID)
     {
-        const response = await fetch(`https://api.spotify.com/v1/users/${this.state.hostID}/playlists/${this.state.sessionCode}/followers`, {
-            method: 'PUT',
+        // const response = await fetch(`https://api.spotify.com/v1/users/${this.state.hostID}/playlists/${this.state.sessionCode}`, {
+        const response = await fetch(`https://api.spotify.com/v1/users/1238233927/playlists/3849ymGTHFxcQxI3YpRD6D`, {
+            method: 'GET',
             headers: {
                 'Authorization': headerText,
-            },
-            'Content-Type': 'application/json'
+            }
         });
         const json = await response.json();
+        this.setState({ sessionData: json });
         console.log(json);
     }
 
@@ -236,7 +238,7 @@ class JoinSession extends React.Component
             case 'player':
                 return (
                     <div>
-                        {/* <SessionBanner sessionInfo={this.state.sessionData} /> */}
+                        <SessionBanner sessionInfo={this.state.sessionData} />
                         <Grid style={{ padding: '30px' }}>
                             <Row>
                                 <PanelGroup accordion id="accordion-example" defaultActiveKey="2">
@@ -313,7 +315,7 @@ class JoinSession extends React.Component
                                                     onChange={(e) => {this.setState({ sessionCode: e.target.value }); console.log(this.state.sessionCode) }}
                                                 />
                                                 <div style={{padding: '20px'}}>
-                                                <Button bsSize="large" style={{ padding: '10px' }} onClick={() => { ((this.state.hostID).length < 1 || this.state.sessionCode.length < 1) ? console.log('Need Name') : this.followPlaylist(this.headerText, this.state.sessionCode); this.setState({view: 'player'})} } block>
+                                                <Button bsSize="large" style={{ padding: '10px' }} onClick={() => { ((this.state.hostID).length < 1 || this.state.sessionCode.length < 1) ? console.log('Need Name') : /*this.followPlaylist(this.headerText, this.state.sessionCode); */this.getPlaylist(this.state.headerText, this.state.sessionCode); this.state.view = 'player'} } block>
                                                         <p>join</p>
                                                 </Button>
                                                 </div>
