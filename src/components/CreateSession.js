@@ -13,6 +13,7 @@ import
 } from "react-bootstrap";
 import querystring from "querystring";
 import Track from "./Track";
+import SessionBanner from "./SessionBanner";
 import Loading from "./Loading";
 
 // Your client id
@@ -41,7 +42,7 @@ var generateRandomString = function (length)
     return text;
 };
 
-const displayTracks = (bool, tracks, handleTrackClick) =>
+const displayTracks = (bool, tracks, handleTrackClick, clickable) =>
 {
     console.log("does this appear in displayTracks?", handleTrackClick);
     let tracksDisplay = []
@@ -55,6 +56,7 @@ const displayTracks = (bool, tracks, handleTrackClick) =>
                     <Track
                         onTrackClick={handleTrackClick}    
                         trackInfo={tracks[e]}
+                        clickable={clickable}
                     />
                 // </div>
             );
@@ -63,28 +65,16 @@ const displayTracks = (bool, tracks, handleTrackClick) =>
     return tracksDisplay;
 };
 
-// const displaySearch = (bool, tracks) =>
-// {
-//     let tracksDisplay = []
-//     if (bool === true)
-//     {
+const styles = {
+    panelDark: {
+        backgroundImage: "none",
+        backgroundColor: "#191414",
 
-//         for (var e in tracks)
-//         {
-//             tracksDisplay.push(
-//                 <div key={e}>
-//                     <Track
-//                         Loading={Loading}
-//                         photo={tracks[e].album.images[2].url}
-//                         title={tracks[e].name}
-//                         artist={tracks[e].artists[0].name}
-//                     />
-//                 </div>
-//             )
-//         }
-//     }
-//     return tracksDisplay;
-// };
+    },
+    centerWhiteBold: {
+        color: "white", textAlign: "center", fontSize: "20px"
+    }
+};
 
 class CreateSession extends React.Component
 {
@@ -117,7 +107,43 @@ class CreateSession extends React.Component
             view: '',
             sessionName: "",
             sessionDescription: "",
-            sessionData: {},
+            sessionData: {
+                "collaborative": false,
+                "description": "This is made from our app!!!",
+                "external_urls": {
+                    "spotify": "http://open.spotify.com/user/thelinmichael/playlist/7d2D2S200NyUE5KYs80PwO"
+                },
+                "followers": {
+                    "href": null,
+                    "total": 0
+                },
+                "href": "https://api.spotify.com/v1/users/thelinmichael/playlists/7d2D2S200NyUE5KYs80PwO",
+                "id": "7d2D2S200NyUE5KYs80PwO",
+                "images": [ ],
+                "name": "A New Playlist",
+                "owner": {
+                    "external_urls": {
+                    "spotify": "http://open.spotify.com/user/thelinmichael"
+                    },
+                    "href": "https://api.spotify.com/v1/users/thelinmichael",
+                    "id": "thelinmichael",
+                    "type": "user",
+                    "uri": "spotify:user:thelinmichael"
+                },
+                "public": false,
+                "snapshot_id": "s0o3TSuYnRLl2jch+oA4OEbKwq/fNxhGBkSPnvhZdmWjNV0q3uCAWuGIhEx8SHIx",
+                "tracks": {
+                    "href": "https://api.spotify.com/v1/users/thelinmichael/playlists/7d2D2S200NyUE5KYs80PwO/tracks",
+                    "items": [ ],
+                    "limit": 100,
+                    "next": null,
+                    "offset": 0,
+                    "previous": null,
+                    "total": 0
+                },
+                "type": "playlist",
+                "uri": "spotify:user:thelinmichael:playlist:7d2D2S200NyUE5KYs80PwO"
+                },
             playlistContent: [],
             tracksInPlaylist: [],
             gotTracks: false,
@@ -180,6 +206,7 @@ class CreateSession extends React.Component
     // API: use the API to create a collaborative playlist
     async createPlaylist(headerText, name, desc)
     {
+        this.setState({ view: 'player' });
         const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists`, {
             method: 'POST',
             headers: {
@@ -202,7 +229,8 @@ class CreateSession extends React.Component
     // - API: return the tracks of a playlist
     async getPlaylistTracks(headerText)
     {
-        const response = await fetch(`https://api.spotify.com/v1/users/alfredovargas/playlists/5XhUeEN3Y5IwuUuvfHxPFH/tracks`, {
+        // const response = await fetch(`https://api.spotify.com/v1/users/alfredovargas/playlists/${this.state.sessionData.id}/tracks`, {
+        const response = await fetch(`https://api.spotify.com/v1/users/alfredovargas/playlists/0LXTq08rGJWw6x2dURPs5a/tracks`, {
             method: 'GET',
             headers: {
                 'Authorization': headerText,
@@ -241,7 +269,8 @@ class CreateSession extends React.Component
     async addTrackToSession(headerText, trackuri)
     {
         var uri = encodeURI(trackuri);
-        const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists/5XhUeEN3Y5IwuUuvfHxPFH/tracks?uris=${uri}`, {
+        // const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists/${this.state.sessionData.id}/tracks?uris=${uri}`, {
+        const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists/0LXTq08rGJWw6x2dURPs5a/tracks?uris=${uri}`, {
             method: 'POST',
             headers: {
                 'Authorization': headerText,
@@ -262,20 +291,21 @@ class CreateSession extends React.Component
                 case 'player':    
                     return (
                         <div>
+                            <SessionBanner sessionInfo={this.state.sessionData} />
                             <Grid style={{ padding: '30px' }}>
                                 <Row>
-                                <PanelGroup accordion id="accordion-example">
-                                    <Panel eventKey="1" onClick={() => { this.getPlaylistTracks(this.state.headerText)}}>
-                                        <Panel.Heading>
-                                            <Panel.Title toggle>Playlist</Panel.Title>
+                                    <PanelGroup accordion id="accordion-example" defaultActiveKey="2">
+                                        <Panel eventKey="1" onClick={() => { this.getPlaylistTracks(this.state.headerText) }}>
+                                            <Panel.Heading style={styles.panelDark} >
+                                                <Panel.Title style={styles.centerWhiteBold} toggle>Playlist</Panel.Title>
                                         </Panel.Heading>
                                         <Panel.Body collapsible>
-                                            {displayTracks(this.state.gotTracks, this.state.tracksInPlaylist, this.handleTrackClick)}
+                                            {displayTracks(this.state.gotTracks, this.state.tracksInPlaylist, this.handleTrackClick, false)}
                                         </Panel.Body>
                                     </Panel>
                                     <Panel eventKey="2" /*onClick={() => { this.searchTrack(this.state.headerText, 'better now') }}*/>
-                                        <Panel.Heading>
-                                            <Panel.Title toggle>Add a Song</Panel.Title>
+                                        <Panel.Heading style={styles.panelDark}>
+                                            <Panel.Title style={styles.centerWhiteBold} toggle>Add a Song</Panel.Title>
                                         </Panel.Heading>
                                         <Panel.Body collapsible>
                                             <Grid>
@@ -290,24 +320,24 @@ class CreateSession extends React.Component
                                                     </Col>
                                                     <Col sm={2} xs={2} style={{padding:'0px'}}>
                                                         <Button bsStyle="primary" onClick={() => {this.searchTrack(this.state.headerText, this.state.query)}}>
-                                                            <p>Enter</p>
+                                                          <p>Enter</p>
                                                         </Button>
                                                     </Col>    
                                                 </Row>
                                                 <Row>
-                                                    {displayTracks(this.state.gotTracks, this.state.searchResults, this.handleTrackClick)}
+                                                    {displayTracks(this.state.gotTracks, this.state.searchResults, this.handleTrackClick, true)}
                                                 </Row>    
                                             </Grid>
                                         </Panel.Body>
                                     </Panel>
-                                    <Panel eventKey="3">
+                                    {/* <Panel eventKey="3">
                                         <Panel.Heading>
                                             <Panel.Title toggle>Collapsible Group Item #3</Panel.Title>
                                         </Panel.Heading>
                                         <Panel.Body collapsible>
                                             
                                         </Panel.Body>
-                                    </Panel>
+                                    </Panel> */}
                                 </PanelGroup>
                                 </Row>
                             </Grid>
@@ -342,7 +372,7 @@ class CreateSession extends React.Component
                                                     onChange={(e) => {this.setState({ sessionDescription: e.target.value }); console.log(this.state.sessionDescription) }}
                                                 />
                                                 <div style={{padding: '20px'}}>
-                                                    <Button bsSize="large" style={{ padding: '10px' }} onClick={() => { ((this.state.sessionName).length < 1) ? console.log('Need Name') : /*this.createPlaylist(this.state.headerText, this.state.sessionName, this.state.sessionDescription);*/ console.log('cliked'); this.setState({ view: 'player' }); console.log(this.state.view)}} block>
+                                                    <Button bsSize="large" style={{ padding: '10px' }} onClick={() => { ((this.state.sessionName).length < 1) ? console.log('Need Name') : /*this.createPlaylist(this.state.headerText, this.state.sessionName, this.state.sessionDescription)}}/*; console.log('cliked');*/ this.setState({ view: 'player' }); console.log(this.state.view) } } block>
                                                         <p>create</p>
                                                     </Button>
                                                 </div>
@@ -352,17 +382,7 @@ class CreateSession extends React.Component
                                 </Row>
                             </Grid>
                         </div>
-                        
-                        // <div>
-                        //     {this.state.userData.email}
-                        //     <Button
-                        //         onClick={() =>
-                        //        {
-                        //            this.state.view = 'CreateSessionView';
-                        //            this.createPlaylist(this.state.headerText);
-                        //            this.render();
-                        //         }}>Create a playlist</Button>
-                        // </div>
+
             ); 
             }
             
