@@ -15,6 +15,8 @@ import querystring from "querystring";
 import Track from "./Track";
 import Loading from "./Loading";
 import SessionBanner from "./SessionBanner";
+import { request } from 'graphql-request';    
+
 
 // Your client id
 var client_id = 'f18adfa22eb64b1b9a74ce823ca80b3b';
@@ -96,16 +98,62 @@ class JoinSession extends React.Component
                 userData: {},
                 hostID: '',
                 sessionCode: '',
-                sessionData: {},
+                sessionData: {
+                    "collaborative": false,
+                    "description": "This is made from our app!!!",
+                    "external_urls": {
+                        "spotify": "http://open.spotify.com/user/thelinmichael/playlist/7d2D2S200NyUE5KYs80PwO"
+                    },
+                    "followers": {
+                        "href": null,
+                        "total": 0
+                    },
+                    "href": "https://api.spotify.com/v1/users/thelinmichael/playlists/7d2D2S200NyUE5KYs80PwO",
+                    "id": "7d2D2S200NyUE5KYs80PwO",
+                    "images": [],
+                    "name": "A New Playlist",
+                    "owner": {
+                        "external_urls": {
+                            "spotify": "http://open.spotify.com/user/thelinmichael"
+                        },
+                        "href": "https://api.spotify.com/v1/users/thelinmichael",
+                        "id": "thelinmichael",
+                        "type": "user",
+                        "uri": "spotify:user:thelinmichael"
+                    },
+                    "public": false,
+                    "snapshot_id": "s0o3TSuYnRLl2jch+oA4OEbKwq/fNxhGBkSPnvhZdmWjNV0q3uCAWuGIhEx8SHIx",
+                    "tracks": {
+                        "href": "https://api.spotify.com/v1/users/thelinmichael/playlists/7d2D2S200NyUE5KYs80PwO/tracks",
+                        "items": [],
+                        "limit": 100,
+                        "next": null,
+                        "offset": 0,
+                        "previous": null,
+                        "total": 0
+                    },
+                    "type": "playlist",
+                    "uri": "spotify:user:thelinmichael:playlist:7d2D2S200NyUE5KYs80PwO"
+                },
                 playlistContent: [],
                 tracksInPlaylist: [],
                 gotTracks: false,
                 gotSearch: false,
                 searchResults: [],
                 query: "",
-                trackToAdd: ''
-            }
+                trackToAdd: '',
+                sessionGraph: {}
+            };
+            this.handleTrackClick = this.handleTrackClick.bind(this);
         }
+
+     handleTrackClick(trackToAdd)
+    {
+        console.log(trackToAdd);
+        console.log(this.state.sessionGraph.id);
+        // this.setState({ trackToAdd: trackToAdd });
+        this.addTrackGraph(trackToAdd, this.state.sessionGraph.id);
+    }
 
     // get hashed token from URL and convert to text in JSON
     getHashParams()
@@ -150,7 +198,7 @@ class JoinSession extends React.Component
     async getPlaylistTracks(headerText)
     {
         // const response = await fetch(`https://api.spotify.com/v1/users/alfredovargas/playlists/${this.state.sessionData.id}/tracks`, {
-        const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists/${this.state.sessionCode}/tracks`, {
+        const response = await fetch(`https://api.spotify.com/v1/users/${this.state.sessionData.owner.id}/playlists/${this.state.sessionData.id}/tracks`, {
             method: 'GET',
             headers: {
                 'Authorization': headerText,
@@ -218,8 +266,8 @@ class JoinSession extends React.Component
     // - API: follow a playlist, need to follow a collaboraive playlist to add a song
     async getPlaylist(headerText, playlistID)
     {
-        // const response = await fetch(`https://api.spotify.com/v1/users/${this.state.hostID}/playlists/${this.state.sessionCode}`, {
-        const response = await fetch(`https://api.spotify.com/v1/users/1238233927/playlists/3849ymGTHFxcQxI3YpRD6D`, {
+        const response = await fetch(`https://api.spotify.com/v1/users/${this.state.hostID}/playlists/${this.state.sessionCode}`, {
+        // const response = await fetch(`https://api.spotify.com/v1/users/1238233927/playlists/3849ymGTHFxcQxI3YpRD6D`, {
             method: 'GET',
             headers: {
                 'Authorization': headerText,
@@ -228,6 +276,38 @@ class JoinSession extends React.Component
         const json = await response.json();
         this.setState({ sessionData: json });
         console.log(json);
+    }
+
+    // Graphcool - Using a serverless database for the backend 
+    //  - fetch built-in API calls to the database held by Graphcool
+    async getSessionGraph(sessionCode)
+    {
+        const query = `query getSession($sessionCode: String!) {
+            Session(sessionID: $sessionCode) {
+                id 
+                sessionID
+            }
+        }`
+        const data = await request('https://api.graph.cool/simple/v1/cjgww71fd4nfp018700vpvkmi', query, { sessionCode });
+        console.log(data.Session);
+        this.setState({sessionGraph: data.Session});
+        console.log(this.state.sessionGraph);
+    }
+
+    async addTrackGraph(trackID, sessionGID)
+    {
+        const mutation = `mutation createTrack($trackID: String!, $sessionGID: ID!) { 
+                createTracks (
+                    trackID: $trackID, 
+                    sessionId: $sessionGID){
+                        id
+                        trackID
+                    }
+                }`
+
+        const data = await request('https://api.graph.cool/simple/v1/cjgww71fd4nfp018700vpvkmi', mutation, { trackID, sessionGID });
+        console.log(data);
+
     }
 
     render()
@@ -315,7 +395,21 @@ class JoinSession extends React.Component
                                                     onChange={(e) => {this.setState({ sessionCode: e.target.value }); console.log(this.state.sessionCode) }}
                                                 />
                                                 <div style={{padding: '20px'}}>
-                                                <Button bsSize="large" style={{ padding: '10px' }} onClick={() => { ((this.state.hostID).length < 1 || this.state.sessionCode.length < 1) ? console.log('Need Name') : /*this.followPlaylist(this.headerText, this.state.sessionCode); */this.getPlaylist(this.state.headerText, this.state.sessionCode); this.state.view = 'player'} } block>
+                                                <Button bsSize="large" style={{ padding: '10px' }}
+                                                    onClick={() =>
+                                                    {
+                                                        if((this.state.hostID).length < 1 || this.state.sessionCode.length < 1){
+                                                            console.log('Need Name');
+                                                        } else{
+                                                            /*this.followPlaylist(this.headerText, this.state.sessionCode); */
+                                                            this.getPlaylist(this.state.headerText, this.state.sessionCode);
+                                                            this.getSessionGraph(this.state.sessionCode);
+                                                            this.state.view = 'player';
+
+                                                        }
+                                                        
+                                                        /* ((this.state.hostID).length < 1 || this.state.sessionCode.length < 1) ? console.log('Need Name') : /*this.followPlaylist(this.headerText, this.state.sessionCode);this.getPlaylist(this.state.headerText, this.state.sessionCode); this.state.view = 'player' */
+                                                    }} block>
                                                         <p>join</p>
                                                 </Button>
                                                 </div>

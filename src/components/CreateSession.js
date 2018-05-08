@@ -15,6 +15,7 @@ import querystring from "querystring";
 import Track from "./Track";
 import SessionBanner from "./SessionBanner";
 import Loading from "./Loading";
+import { request } from 'graphql-request';    
 
 // Your client id
 var client_id = 'f18adfa22eb64b1b9a74ce823ca80b3b';
@@ -150,7 +151,10 @@ class CreateSession extends React.Component
             gotSearch: false,
             searchResults: [],
             query: "",
-            trackToAdd: ''
+            trackToAdd: '',
+            sessionGraph: {},
+            sessionGraphAdd: [],
+            updatePlayer: false
         };
         this.handleTrackClick = this.handleTrackClick.bind(this);
 
@@ -222,6 +226,8 @@ class CreateSession extends React.Component
             })
         });
         const json = await response.json();
+        this.setState({ sessionData: json });
+        this.createSessionGraph(this.state.sessionData.id);
         this.state.sessionData = json;
         console.log(json);
     }
@@ -229,8 +235,8 @@ class CreateSession extends React.Component
     // - API: return the tracks of a playlist
     async getPlaylistTracks(headerText)
     {
-        // const response = await fetch(`https://api.spotify.com/v1/users/alfredovargas/playlists/${this.state.sessionData.id}/tracks`, {
-        const response = await fetch(`https://api.spotify.com/v1/users/alfredovargas/playlists/0LXTq08rGJWw6x2dURPs5a/tracks`, {
+        const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists/${this.state.sessionData.id}/tracks`, {
+        // const response = await fetch(`https://api.spotify.com/v1/users/alfredovargas/playlists/0LXTq08rGJWw6x2dURPs5a/tracks`, {
             method: 'GET',
             headers: {
                 'Authorization': headerText,
@@ -269,8 +275,8 @@ class CreateSession extends React.Component
     async addTrackToSession(headerText, trackuri)
     {
         var uri = encodeURI(trackuri);
-        // const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists/${this.state.sessionData.id}/tracks?uris=${uri}`, {
-        const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists/0LXTq08rGJWw6x2dURPs5a/tracks?uris=${uri}`, {
+        const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists/${this.state.sessionData.id}/tracks?uris=${uri}`, {
+        // const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists/0LXTq08rGJWw6x2dURPs5a/tracks?uris=${uri}`, {
             method: 'POST',
             headers: {
                 'Authorization': headerText,
@@ -279,6 +285,74 @@ class CreateSession extends React.Component
         });
         const json = await response.json();
         console.log(json);
+    }
+
+    // Graphcool - Using a serverless database for the backend 
+    //  - fetch built-in API calls to the database held by Graphcool 
+    async fetchGraph(graphID)
+    {   
+        const query = `query getSession($graphID: ID!) {
+            Session(id: $graphID) {
+                id 
+                trackses {
+                    trackID
+                    id
+                }
+            }
+        }`
+        console.log("this is in fetchgraph", graphID);
+        // const data = await request('https://api.graph.cool/simple/v1/cjgww71fd4nfp018700vpvkmi', query, {graphID});
+        const data = await request('https://api.graph.cool/simple/v1/cjgww71fd4nfp018700vpvkmi', query, {graphID});
+        // this.setState({ s: data });
+        var tracksToAdd = data.Session.trackses;
+        console.log(data.Session.trackses);
+        console.log(tracksToAdd);
+        // this.removeTrackGraph("cjgwwohnd0wm301049e8f5yso");
+        if (tracksToAdd.length > 1)
+        {
+            for (var i in tracksToAdd)
+            {
+                var track = tracksToAdd[i].trackID;
+                console.log(track);
+                this.removeTrackGraph(track);
+                this.addTrackToSession(this.state.headerText, track);
+            }
+        }
+        
+    }
+
+    // Graphcool - call API to remove a track from the database using its unique ID
+    async removeTrackGraph(trackGID)
+    {
+        const mutation = `mutation delSession($trackGID: ID!) {
+            deleteTracks(id: $trackGID) {
+                id
+                trackID
+            }
+        }`
+
+        const data = await request('https://api.graph.cool/simple/v1/cjgww71fd4nfp018700vpvkmi', mutation, {trackGID});
+        console.log(data);
+
+    }
+
+    // Graphcool - call API to create an entry for the Session table in the database
+    async createSessionGraph(sessionID)
+    {
+        const mutation = `mutation($sessionID: String!){
+            createSession(
+                sessionID: $sessionID
+            ){
+                id
+            }
+        }` 
+
+        const data = await request('https://api.graph.cool/simple/v1/cjgww71fd4nfp018700vpvkmi', mutation, { sessionID });
+        
+        this.setState({ sessionGraph: data.createSession });
+        console.log(data);
+        console.log(this.state.sessionGraph.id);
+
     }
 
     render()
@@ -295,7 +369,7 @@ class CreateSession extends React.Component
                             <Grid style={{ padding: '30px' }}>
                                 <Row>
                                     <PanelGroup accordion id="accordion-example" defaultActiveKey="2">
-                                        <Panel eventKey="1" onClick={() => { this.getPlaylistTracks(this.state.headerText) }}>
+                                        <Panel eventKey="1" onClick={() => { this.getPlaylistTracks(this.state.headerText)}}>
                                             <Panel.Heading style={styles.panelDark} >
                                                 <Panel.Title style={styles.centerWhiteBold} toggle>Playlist</Panel.Title>
                                         </Panel.Heading>
@@ -325,7 +399,7 @@ class CreateSession extends React.Component
                                                     </Col>    
                                                 </Row>
                                                 <Row>
-                                                    {displayTracks(this.state.gotTracks, this.state.searchResults, this.handleTrackClick, true)}
+                                                        {displayTracks(this.state.gotTracks, this.state.searchResults, this.handleTrackClick, true)}
                                                 </Row>    
                                             </Grid>
                                         </Panel.Body>
@@ -339,6 +413,16 @@ class CreateSession extends React.Component
                                         </Panel.Body>
                                     </Panel> */}
                                 </PanelGroup>
+                                </Row>
+                                <Row>
+                                    <Button bsSize="large" style={{ padding: '10px' }}
+                                        onClick={() =>
+                                        {
+                                            console.log(this.state.sessionGraph.id);
+                                            this.fetchGraph(this.state.sessionGraph.id);
+                                        }} block>
+                                        <p>Add Requests</p>
+                                    </Button>
                                 </Row>
                             </Grid>
                         </div>
@@ -372,7 +456,23 @@ class CreateSession extends React.Component
                                                     onChange={(e) => {this.setState({ sessionDescription: e.target.value }); console.log(this.state.sessionDescription) }}
                                                 />
                                                 <div style={{padding: '20px'}}>
-                                                    <Button bsSize="large" style={{ padding: '10px' }} onClick={() => { ((this.state.sessionName).length < 1) ? console.log('Need Name') : /*this.createPlaylist(this.state.headerText, this.state.sessionName, this.state.sessionDescription)}}/*; console.log('cliked');*/ this.setState({ view: 'player' }); console.log(this.state.view) } } block>
+                                                    <Button bsSize="large" style={{ padding: '10px' }}
+                                                        onClick={() =>
+                                                        {
+                                                            if (this.state.sessionData.length < 1)
+                                                            {
+                                                                console.log("Need name");
+                                                            } else
+                                                            {
+                                                                this.createPlaylist(this.state.headerText, this.state.sessionName, this.state.sessionDescription);
+                                                                console.log(this.state.sessionData);
+                                                                {/* this.createSessionGraph(this.state.sessionName); */}
+                                                                console.log('after create playlist');
+                                                                this.setState({ view: 'player' });
+                                                                {/* const data = await this.createSessionGraph(this.state.sessionData.id); */}
+                                                            }
+                                                            
+                                                        }} block>
                                                         <p>create</p>
                                                     </Button>
                                                 </div>

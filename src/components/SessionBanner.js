@@ -26,12 +26,23 @@ class SessionBanner extends React.Component
 {
     constructor(props){
         super(props);
+        this.state = {
+            updatePlayer: false,
+            playerURL: ''
+        }
     }
 
 
     render()
     {
-        const {sessionInfo} = this.props;
+        const { sessionInfo } = this.props;
+        this.state.playerURL = `https://open.spotify.com/embed?uri=spotify:user:${sessionInfo.owner.id}:playlist:${sessionInfo.id}&view=coverart`;
+        if (this.state.updatePlayer)
+        {
+            console.log(document.getElementById('player').src);
+            document.getElementById('player').src = document.getElementById('player').src;
+        }
+        this.state.updatePlayer = true;
         return (
             <div>
                 <Jumbotron style={styles.JammJumbo}>
@@ -54,7 +65,9 @@ class SessionBanner extends React.Component
                                     <Panel.Heading>
                                     <Panel.Title componentClass="h3">Panel heading with a title</Panel.Title>
                                     </Panel.Heading>
-                                    <Panel.Body>Panel content</Panel.Body>
+                                    <Panel.Body>
+                                        <iframe id="player" src={this.state.playerURL} width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                                    </Panel.Body>
                                 </Panel>
                             </Col>
                         </Row>
