@@ -5,14 +5,14 @@ import
     BrowserRouter
 } from "react-router-dom";
 import App from "./App";
-// import BodyBackgroundColor from "react-body-backgroundcolor";
+import BodyBackgroundColor from "react-body-backgroundcolor";
 
 ReactDOM.render(
-    // <BodyBackgroundColor backgroundColor="#ecebe8">
+    <BodyBackgroundColor backgroundColor="#ecebe8">
         <BrowserRouter style={{ backgroundColor: "#ecebe8", height: window.innerHeight }}>
             <App />
-        </BrowserRouter>,
-    // </BodyBackgroundColor>,
+        </BrowserRouter>
+     </BodyBackgroundColor>,
 
     document.getElementById("root"),
 );

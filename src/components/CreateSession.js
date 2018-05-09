@@ -74,6 +74,14 @@ const styles = {
     },
     centerWhiteBold: {
         color: "white", textAlign: "center", fontSize: "20px"
+    },
+    JammJumbo: {
+        backgroundColor: "rgb(45, 45, 45)",
+        color: "#84bd00",
+        position: "relative",
+        width: "100%",
+        marginBottom: "0px",
+        padding: "20px"
     }
 };
 
@@ -490,12 +498,10 @@ class CreateSession extends React.Component
         } 
 
         return (
-            <Grid>
-                <Jumbotron>
-                    <h1>Sign Into Your Spotify Account To Begin A Session</h1>
-                    <p>
-                        This App Needs You To Log In To Access Your Playlists.
-                    </p>
+            <Grid style={{ padding: '30px' }}>
+                <Jumbotron style={styles.JammJumbo}>
+                    <h1 style={{ color: "#1db954" }}>Connect To Your Spotify Account To Begin A Session</h1>
+                    <h3 style={{ color:"white"}}>Sign In To Start Jamming</h3>
                     <p>
                         <Button href={'https://accounts.spotify.com/authorize?' +
                             querystring.stringify({
@@ -505,11 +511,10 @@ class CreateSession extends React.Component
                                 redirect_uri: redirect_uri,
                                 state: state
                             })
-                        } bsStyle="primary">Learn more</Button>
+                        } bsStyle="primary"><h5>Connect to Spotify</h5></Button>
                     </p>
                 </Jumbotron>
             </Grid>
-         
         );   
     }
 }

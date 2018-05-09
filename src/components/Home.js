@@ -21,7 +21,7 @@ import LinkContainer from "react-router-bootstrap/lib/LinkContainer";
 const styles = {
     JammJumbo: {
         backgroundColor: "rgb(45, 45, 45)",
-        color: "#84bd00",
+        color: "#1db954",
         position: "relative",
         width: "100%",
         marginBottom: "0px",

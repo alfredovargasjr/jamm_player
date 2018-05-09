@@ -73,6 +73,14 @@ const styles = {
     },
     centerWhiteBold: {
         color: "white", textAlign: "center", fontSize: "20px"
+    },
+    JammJumbo: {
+        backgroundColor: "rgb(45, 45, 45)",
+        color: "#84bd00",
+        position: "relative",
+        width: "100%",
+        marginBottom: "0px",
+        padding: "20px"
     }
 };
 
@@ -425,12 +433,29 @@ class JoinSession extends React.Component
             default:
                 this.state.view = 'joinWindow';
                 return (
-                    <Grid>
-                        <Jumbotron>
-                            <h1>Sign Into Your Spotify Account To Join A Session</h1>
-                            <p>
-                                This App needs you to log in so you can Jamm!.
-                            </p>
+                    // <Grid>
+                    //     <Jumbotron>
+                    //         <h1>Sign Into Your Spotify Account To Join A Session</h1>
+                    //         <p>
+                    //             This App needs you to log in so you can Jamm!.
+                    //         </p>
+                    //         <p>
+                    //             <Button href={'https://accounts.spotify.com/authorize?' +
+                    //                 querystring.stringify({
+                    //                     response_type: 'token',
+                    //                     client_id: client_id,
+                    //                     scope: scope,
+                    //                     redirect_uri: redirect_uri,
+                    //                     state: state
+                    //                 })
+                    //             } bsStyle="primary">Learn more</Button>
+                    //         </p>
+                    //     </Jumbotron>
+                    // </Grid>
+                    <Grid style={{ padding: '30px' }}>
+                        <Jumbotron style={styles.JammJumbo}>
+                            <h1 style={{ color: "#1db954" }}>Connect To Your Spotify Account To Join A Session</h1>
+                            <h3 style={{ color: "white" }}>Sign In To Start Jamming</h3>
                             <p>
                                 <Button href={'https://accounts.spotify.com/authorize?' +
                                     querystring.stringify({
@@ -440,7 +465,7 @@ class JoinSession extends React.Component
                                         redirect_uri: redirect_uri,
                                         state: state
                                     })
-                                } bsStyle="primary">Learn more</Button>
+                                } bsStyle="primary"><h5>Connect to Spotify</h5></Button>
                             </p>
                         </Jumbotron>
                     </Grid>
