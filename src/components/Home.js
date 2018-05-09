@@ -33,6 +33,10 @@ const styles = {
 };
 
 const wellStyles = { maxWidth: 400, margin: '0 auto 10px' };
+const panelDark = {
+    backgroundImage: "none",
+    backgroundColor: "#191414",
+};
 
 // home page component
 class Home extends React.Component
@@ -53,10 +57,10 @@ class Home extends React.Component
                             <PanelGroup accordion id="accordion-uncontrolled-example" defaultActiveKey="2"
                                 style={{ paddingTop: "15px"}}>
                                 <Panel eventKey="1">
-                                    <Panel.Heading style={{ backgroundImage: "none", backgroundColor: "#415500" }}>
-                                        <Panel.Title style={styles.centerWhiteBold} toggle><b>Create a Session</b></Panel.Title>
+                                    <Panel.Heading style={panelDark}>
+                                        <Panel.Title style={styles.centerWhiteBold} toggle><h3><b>Create a Session</b></h3></Panel.Title>
                                     </Panel.Heading>
-                                    <Panel.Body collapsible>Create a Session
+                                    <Panel.Body collapsible>
                                             <LinkContainer to="/CreateSession">
                                                 <Button bsSize="large" block>
                                                     <h4>Create</h4>
@@ -66,10 +70,10 @@ class Home extends React.Component
                                     
                             </Panel>
                             <Panel eventKey="2">
-                                    <Panel.Heading style={{ backgroundImage: "none", backgroundColor: "#7A9915" }}>
-                                        <Panel.Title style={styles.centerWhiteBold} toggle><b>Join a Session</b></Panel.Title>
+                                    <Panel.Heading style={panelDark}>
+                                        <Panel.Title style={styles.centerWhiteBold} toggle><h3><b>Join a Session</b></h3></Panel.Title>
                                 </Panel.Heading>
-                                    <Panel.Body collapsible>Join a Session
+                                    <Panel.Body collapsible>
                                             <LinkContainer to="/JoinSession">
                                         <Button bsSize="large" block>
                                                 <h4>Join</h4>

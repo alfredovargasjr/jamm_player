@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Jamm App",
+  "name": "Jam with friends using Jamm and Spotify's API",
   "icons": [
     {
       "src": "favicon.ico",

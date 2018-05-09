@@ -318,7 +318,7 @@ class JoinSession extends React.Component
             case 'player':
                 return (
                     <div>
-                        <SessionBanner sessionInfo={this.state.sessionData} />
+                        <SessionBanner sessionInfo={this.state.sessionData} viewPlayer={false} />
                         <Grid style={{ padding: '30px' }}>
                             <Row>
                                 <PanelGroup accordion id="accordion-example" defaultActiveKey="2">
@@ -405,6 +405,7 @@ class JoinSession extends React.Component
                                                             this.getPlaylist(this.state.headerText, this.state.sessionCode);
                                                             this.getSessionGraph(this.state.sessionCode);
                                                             this.state.view = 'player';
+                                                            //this.setState({ view: 'player' });
 
                                                         }
                                                         

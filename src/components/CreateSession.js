@@ -354,7 +354,7 @@ class CreateSession extends React.Component
         console.log(this.state.sessionGraph.id);
 
     }
-
+    
     render()
     { 
         var state = generateRandomString(16);
@@ -365,8 +365,18 @@ class CreateSession extends React.Component
                 case 'player':    
                     return (
                         <div>
-                            <SessionBanner sessionInfo={this.state.sessionData} />
+                            <SessionBanner sessionInfo={this.state.sessionData} viewPlayer={true} />
                             <Grid style={{ padding: '30px' }}>
+                                <Row style={{padding: '15px'}}>
+                                    <Button bsSize="large" style={{ paddingBottom: '10px' }}
+                                        onClick={() =>
+                                        {
+                                            console.log(this.state.sessionGraph.id);
+                                            this.fetchGraph(this.state.sessionGraph.id);
+                                        }} block>
+                                        <p>Add Requests</p>
+                                    </Button>
+                                </Row>
                                 <Row>
                                     <PanelGroup accordion id="accordion-example" defaultActiveKey="2">
                                         <Panel eventKey="1" onClick={() => { this.getPlaylistTracks(this.state.headerText)}}>
@@ -414,16 +424,6 @@ class CreateSession extends React.Component
                                     </Panel> */}
                                 </PanelGroup>
                                 </Row>
-                                <Row>
-                                    <Button bsSize="large" style={{ padding: '10px' }}
-                                        onClick={() =>
-                                        {
-                                            console.log(this.state.sessionGraph.id);
-                                            this.fetchGraph(this.state.sessionGraph.id);
-                                        }} block>
-                                        <p>Add Requests</p>
-                                    </Button>
-                                </Row>
                             </Grid>
                         </div>
                     );
@@ -464,12 +464,13 @@ class CreateSession extends React.Component
                                                                 console.log("Need name");
                                                             } else
                                                             {
+                                                                
                                                                 this.createPlaylist(this.state.headerText, this.state.sessionName, this.state.sessionDescription);
                                                                 console.log(this.state.sessionData);
-                                                                {/* this.createSessionGraph(this.state.sessionName); */}
+                                                                    /* this.createSessionGraph(this.state.sessionName); */
                                                                 console.log('after create playlist');
                                                                 this.setState({ view: 'player' });
-                                                                {/* const data = await this.createSessionGraph(this.state.sessionData.id); */}
+                                                                    /* const data = await this.createSessionGraph(this.state.sessionData.id); */
                                                             }
                                                             
                                                         }} block>
@@ -509,11 +510,8 @@ class CreateSession extends React.Component
                 </Jumbotron>
             </Grid>
          
-        );
-        
+        );   
     }
-        
-        
 }
 
 export default CreateSession;
