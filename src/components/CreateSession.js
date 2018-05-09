@@ -9,7 +9,8 @@ import
     Form,
     Row,
     Col,
-    FormControl
+    FormControl,
+    Badge
 } from "react-bootstrap";
 import querystring from "querystring";
 import Track from "./Track";
@@ -162,7 +163,8 @@ class CreateSession extends React.Component
             trackToAdd: '',
             sessionGraph: {},
             sessionGraphAdd: [],
-            updatePlayer: false
+            updatePlayer: false,
+            requestBadge: 0
         };
         this.handleTrackClick = this.handleTrackClick.bind(this);
 
@@ -316,17 +318,40 @@ class CreateSession extends React.Component
         console.log(data.Session.trackses);
         console.log(tracksToAdd);
         // this.removeTrackGraph("cjgwwohnd0wm301049e8f5yso");
-        if (tracksToAdd.length > 1)
+        if (tracksToAdd.length > 0)
         {
             for (var i in tracksToAdd)
             {
-                var track = tracksToAdd[i].trackID;
+                var track = tracksToAdd[i];
                 console.log(track);
-                this.removeTrackGraph(track);
-                this.addTrackToSession(this.state.headerText, track);
+                this.removeTrackGraph(track.id);
+                this.addTrackToSession(this.state.headerText, track.trackID);
             }
         }
-        
+    }
+    
+    // Graphcool - Using a serverless database for the backend
+    //  - fetch built-in API calls to the database held by Graphcool 
+    async badgeRequestsGraph(graphID)
+    {   
+        const query = `query getSession($graphID: ID!) {
+            Session(id: $graphID) {
+                id 
+                trackses {
+                    trackID
+                    id
+                }
+            }
+        }`
+        console.log("this is in fetchgraph", graphID);
+        // const data = await request('https://api.graph.cool/simple/v1/cjgww71fd4nfp018700vpvkmi', query, {graphID});
+        const data = await request('https://api.graph.cool/simple/v1/cjgww71fd4nfp018700vpvkmi', query, {graphID});
+        // this.setState({ s: data });
+        var tracksToAdd = data.Session.trackses;
+        console.log(data.Session.trackses);
+        console.log(tracksToAdd);
+        // this.removeTrackGraph("cjgwwohnd0wm301049e8f5yso");
+        this.setState({ requestBadge: tracksToAdd.length });
     }
 
     // Graphcool - call API to remove a track from the database using its unique ID
@@ -381,13 +406,18 @@ class CreateSession extends React.Component
                                         {
                                             console.log(this.state.sessionGraph.id);
                                             this.fetchGraph(this.state.sessionGraph.id);
+                                            this.badgeRequestsGraph(this.state.sessionGraph.id);
                                         }} block>
-                                        <p>Add Requests</p>
+                                        <p>Add Requests <Badge>{this.state.requestBadge}</Badge></p>
                                     </Button>
                                 </Row>
                                 <Row>
                                     <PanelGroup accordion id="accordion-example" defaultActiveKey="2">
-                                        <Panel eventKey="1" onClick={() => { this.getPlaylistTracks(this.state.headerText)}}>
+                                        <Panel eventKey="1" onClick={() =>
+                                        {
+                                            this.getPlaylistTracks(this.state.headerText);
+                                            this.badgeRequestsGraph(this.state.sessionGraph.id);
+                                        }}>
                                             <Panel.Heading style={styles.panelDark} >
                                                 <Panel.Title style={styles.centerWhiteBold} toggle>Playlist</Panel.Title>
                                         </Panel.Heading>
