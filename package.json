@@ -37,6 +37,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "gh-pages": "^1.1.0",
     "style-loader": "^0.20.3"
   }
 }
