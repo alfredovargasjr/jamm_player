@@ -21,7 +21,9 @@ import { request } from 'graphql-request';
 // Your client id
 var client_id = 'f18adfa22eb64b1b9a74ce823ca80b3b';
 // Your redirect uri
-var redirect_uri = 'http://localhost:3000/JoinSession';
+// var redirect_uri = 'http://localhost:3000/JoinSession';
+var redirect_uri = 'https://alfredovargasjr.github.io/CreateSession';
+
 //scope for token
 var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private playlist-read-collaborative playlist-read-private';
 
@@ -121,43 +123,7 @@ class JoinSession extends React.Component
                 userData: {},
                 hostID: '',
                 sessionCode: '',
-                sessionData: {
-                    "collaborative": false,
-                    "description": "This is made from our app!!!",
-                    "external_urls": {
-                        "spotify": "http://open.spotify.com/user/thelinmichael/playlist/7d2D2S200NyUE5KYs80PwO"
-                    },
-                    "followers": {
-                        "href": null,
-                        "total": 0
-                    },
-                    "href": "https://api.spotify.com/v1/users/thelinmichael/playlists/7d2D2S200NyUE5KYs80PwO",
-                    "id": "7d2D2S200NyUE5KYs80PwO",
-                    "images": [],
-                    "name": "A New Playlist",
-                    "owner": {
-                        "external_urls": {
-                            "spotify": "http://open.spotify.com/user/thelinmichael"
-                        },
-                        "href": "https://api.spotify.com/v1/users/thelinmichael",
-                        "id": "thelinmichael",
-                        "type": "user",
-                        "uri": "spotify:user:thelinmichael"
-                    },
-                    "public": false,
-                    "snapshot_id": "s0o3TSuYnRLl2jch+oA4OEbKwq/fNxhGBkSPnvhZdmWjNV0q3uCAWuGIhEx8SHIx",
-                    "tracks": {
-                        "href": "https://api.spotify.com/v1/users/thelinmichael/playlists/7d2D2S200NyUE5KYs80PwO/tracks",
-                        "items": [],
-                        "limit": 100,
-                        "next": null,
-                        "offset": 0,
-                        "previous": null,
-                        "total": 0
-                    },
-                    "type": "playlist",
-                    "uri": "spotify:user:thelinmichael:playlist:7d2D2S200NyUE5KYs80PwO"
-                },
+                sessionData: {},
                 playlistContent: [],
                 tracksInPlaylist: [],
                 gotTracks: false,

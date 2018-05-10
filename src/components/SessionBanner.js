@@ -22,6 +22,11 @@ const styles = {
     },
 };
 
+/**
+ * Class SessionBanner
+ *  - react component
+ *  - display the session information and player if the host
+ */
 class SessionBanner extends React.Component
 {
     constructor(props){
@@ -32,17 +37,17 @@ class SessionBanner extends React.Component
         }
     }
 
-
+    /**
+     * Display the session information and the player
+     *  - player will display only if host is parent
+     */
     render()
     {
         const { sessionInfo, viewPlayer } = this.props;
         console.log("INSIDE SESSIOBABBER", viewPlayer);
-        // this.state.playerURL = `https://open.spotify.com/embed?uri=spotify:user:${sessionInfo.owner.id}:playlist:${sessionInfo.id}&view=coverart`;
-        // if (this.state.updatePlayer)
-        // {
-        //     console.log(document.getElementById('player').src);
-        //     document.getElementById('player').src = document.getElementById('player').src;
-        // }
+        /**
+         * IF user can view the player, then return the html for the player
+         */
         if (!viewPlayer)
             {
                 return (
@@ -70,7 +75,6 @@ class SessionBanner extends React.Component
             }else
         {
             this.state.playerURL = `https://open.spotify.com/embed?uri=spotify:user:${sessionInfo.owner.id}:playlist:${sessionInfo.id}&view=coverart`;
-            // this.state.playerURL = `https://open.spotify.com/embed?uri=spotify:user:alfredovargas:playlist:2i9fQiK8AxFGLpk1NoznAO&view=coverart`;
             console.log(this.state.playerURL);
             if (this.state.updatePlayer)
             {
@@ -104,14 +108,6 @@ class SessionBanner extends React.Component
                                         </div>
                                     </Col>
                                     <Col lg={4} />
-                                    {/* <Panel>
-                                    <Panel.Heading>
-                                    <Panel.Title componentClass="h3">Panel heading with a title</Panel.Title>
-                                    </Panel.Heading>
-                                    <Panel.Body>
-                                        <iframe id="player" src={this.state.playerURL} width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-                                    </Panel.Body>
-                                </Panel> */}
                                 </Col>
                             </Row>
                         </Grid>
