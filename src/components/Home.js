@@ -4,8 +4,6 @@ import
     Grid,
     Col,
     Row,
-    Thumbnail,
-    ProgressBar,
     Button,
     Form,
     InputGroup,
@@ -32,6 +30,10 @@ const styles = {
     },
 };
 
+
+/**
+ * styling for css
+ */
 const wellStyles = { maxWidth: 400, margin: '0 auto 10px' };
 const panelDark = {
     backgroundImage: "none",
@@ -41,9 +43,20 @@ const panelDark = {
 // home page component
 class Home extends React.Component
 {
+    /**
+     * Render method, part of the React frame work
+     *  - return html to the index file using javascript
+     *  - component gets rerendered whenever tis state changes
+     */
     render()
     {
+        /**
+         * html to return from render call
+         */
         return (
+            /**
+             * Home page of the app
+             */
             <div style={{ backgroundColor: "#ecebe8", height: window.innerHeight,}}>
                 <Jumbotron style={styles.JammJumbo}>
                         <h1 style={{textAlign: "center", fontSize:"70px"}}> <b>Jamm.</b></h1>

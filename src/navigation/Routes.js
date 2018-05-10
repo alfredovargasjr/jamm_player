@@ -5,6 +5,9 @@ import LoadingComponent from "../components/Loading";
 import PropTypes from "prop-types";
 import { Alert, Button } from "react-bootstrap";
 
+/**
+ * Load routes for the different componets to mount
+ */
 const HomeRoute = Loadable({
     loader: () => import("../components/Home"),
     loading: LoadingComponent
@@ -25,11 +28,6 @@ const JoinSessionRoute = Loadable({
     loading: LoadingComponent
 });
 
-// const LogInCredRoute = Loadable({
-//     loader: () => import("/mnt/c/Users/varga/Documents/GitHub/Jamm_Project_SE/jamm-project/client/server"),
-//     loading: LoadingComponent
-// })
-
 const RoutePath = ({
 	location
 }) => (
@@ -45,6 +43,9 @@ RoutePath.propTypes = {
     location: PropTypes.object.isRequired
 };
 
+/**
+ * Route component reroutes other as other components are called
+ */
 class Routes extends React.Component
 {
     state = {

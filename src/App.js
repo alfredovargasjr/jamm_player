@@ -5,6 +5,12 @@ import Routes from "./navigation/Routes";
 
 const height = (windowheight) => (windowheight - 50) + 'px';
 
+/**
+ * App component
+ *  - main component that mounts:
+ *    - navagation bar
+ *    - route component
+ */
 const App = () => (
   <div style={{ marginTop: "50px", backgroundColor: "#ecebe8", height: window.innerHeight }}>
     <NavBar />

@@ -42,6 +42,13 @@ var generateRandomString = function (length)
     return text;
 };
 
+/**
+ * Display the tracks of the session's playlist
+ * @param {boolean} bool - proced when available
+ * @param {object list} tracks - list of tracks to be displayed, received from Spotify's API, getPlaylist()
+ * @param {method} handleTrackClick - method to handle onClick of the Track component
+ * @param {boolean} clickable - make the track clickable to the user
+ */
 const displayTracks = (bool, tracks, handleTrackClick, clickable) =>
 {
     console.log("does this appear in displayTracks?", handleTrackClick);
@@ -65,6 +72,9 @@ const displayTracks = (bool, tracks, handleTrackClick, clickable) =>
     return tracksDisplay;
 };
 
+/**
+ * Styling for css
+ */
 const styles = {
     panelDark: {
         backgroundImage: "none",
@@ -84,7 +94,11 @@ const styles = {
     }
 };
 
-
+/**
+ * Class JoinSession: This is where the Member interacts with the UI
+ *  - react component
+ *  - render upon mounting of component
+ */
 class JoinSession extends React.Component
 {
 
@@ -97,6 +111,7 @@ class JoinSession extends React.Component
         
     }
 
+    // create props instance
     constructor(props)
         {
             super(props);
@@ -155,6 +170,10 @@ class JoinSession extends React.Component
             this.handleTrackClick = this.handleTrackClick.bind(this);
         }
 
+    /**
+     * Add the passed track uri to the playlist, using Spotify's API
+     * @param {string} trackToAdd 
+     */
      handleTrackClick(trackToAdd)
     {
         console.log(trackToAdd);
@@ -185,7 +204,7 @@ class JoinSession extends React.Component
         return hashParams;
     }
 
-    // - API: call api to get a snapshot of the users profile
+    // Spotify API: call api to get a snapshot of the users profile
     async callApi(headerText)
     {
         console.log(headerText);
@@ -202,7 +221,7 @@ class JoinSession extends React.Component
         console.log(this.state.userData);
     }
 
-    // - API: return the tracks of a playlist
+    // - Spotify API: return the tracks of a playlist
     async getPlaylistTracks(headerText)
     {
         // const response = await fetch(`https://api.spotify.com/v1/users/alfredovargas/playlists/${this.state.sessionData.id}/tracks`, {
@@ -224,7 +243,7 @@ class JoinSession extends React.Component
         this.setState({ gotTracks: true });
     }
 
-    // - API: search for a track 
+    // - Spotify API: search for a track 
     async searchTrack(headerText, name)
     {
         var uri = encodeURI(name);
@@ -302,6 +321,12 @@ class JoinSession extends React.Component
         console.log(this.state.sessionGraph);
     }
 
+    /**
+     * Add the track uri to the Graph database
+     *
+     * @param {string} trackID 
+     * @param {string} sessionGID 
+     */
     async addTrackGraph(trackID, sessionGID)
     {
         const mutation = `mutation createTrack($trackID: String!, $sessionGID: ID!) { 
@@ -318,11 +343,23 @@ class JoinSession extends React.Component
 
     }
 
+    /**
+     * Render method, part of the React frame work
+     *  - return html to the index file using javascript
+     *  - component gets rerendered whenever tis state changes
+     */
     render()
     {
         var state = generateRandomString(16);
         console.log("In sign in");
-        switch(this.state.view){
+        switch (this.state.view)
+        {
+            /**
+             * The Sesssion window
+             * - includes
+             *      - the playlist
+             *      - search window
+             */
             case 'player':
                 return (
                     <div>
@@ -365,20 +402,16 @@ class JoinSession extends React.Component
                                             </Grid>
                                         </Panel.Body>
                                     </Panel>
-                                    {/* <Panel eventKey="3">
-                                        <Panel.Heading>
-                                            <Panel.Title toggle>Collapsible Group Item #3</Panel.Title>
-                                        </Panel.Heading>
-                                        <Panel.Body collapsible>
-                                            
-                                        </Panel.Body>
-                                    </Panel> */}
                                 </PanelGroup>
                             </Row>
                         </Grid>
                     </div>
                 );
             case 'joinWindow':
+                /**
+                 * The join a session window
+                 *  - Member enters the session information to join the session
+                 */    
                 return(
                     <div style={{ backgroundColor: "#ecebe8", height: window.innerHeight, }}>
                             <Grid style={{padding: '30px'}}>
@@ -433,25 +466,10 @@ class JoinSession extends React.Component
             default:
                 this.state.view = 'joinWindow';
                 return (
-                    // <Grid>
-                    //     <Jumbotron>
-                    //         <h1>Sign Into Your Spotify Account To Join A Session</h1>
-                    //         <p>
-                    //             This App needs you to log in so you can Jamm!.
-                    //         </p>
-                    //         <p>
-                    //             <Button href={'https://accounts.spotify.com/authorize?' +
-                    //                 querystring.stringify({
-                    //                     response_type: 'token',
-                    //                     client_id: client_id,
-                    //                     scope: scope,
-                    //                     redirect_uri: redirect_uri,
-                    //                     state: state
-                    //                 })
-                    //             } bsStyle="primary">Learn more</Button>
-                    //         </p>
-                    //     </Jumbotron>
-                    // </Grid>
+                    /**
+                     * The sign in page for the user to enter their credentials
+                     *  - needed to receive a token to use the API
+                     */
                     <Grid style={{ padding: '30px' }}>
                         <Jumbotron style={styles.JammJumbo}>
                             <h1 style={{ color: "#1db954" }}>Connect To Your Spotify Account To Join A Session</h1>
@@ -471,7 +489,6 @@ class JoinSession extends React.Component
                     </Grid>
                 );
         } 
-        // }
     }
 }
 

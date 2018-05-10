@@ -2,6 +2,10 @@ import React from "react";
 import { Navbar, NavItem, Nav} from "react-bootstrap";
 import LinkContainer from "react-router-bootstrap/lib/LinkContainer";
 
+/**
+ * the navigation bar for the app,
+ *  - reroutes to home component on click
+ */
 const NavBar = () => (
 
     <Navbar inverse collapseOnSelect fixedTop>

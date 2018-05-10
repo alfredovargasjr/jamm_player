@@ -17,27 +17,18 @@ class Track extends React.Component
         // this.onTrackClick = this.onTrackClick.bind(this);
     }
 
-    // handleClick(uri)
-    // {
-    //     this.props.onTrackClick(uri);
-    //     console.log(uri);
-    // }
-
+    /**
+     * render the Track component
+     *  - return the html using javascript
+     */
     render()
     {
         const { loading, trackInfo, clickable } = this.props;
+        /**
+         * reutrn a track card with its information
+         *  - onClick: return the tracks uri for requests
+         */
         return (
-            // <Panel style={{padding:"0px"}}>
-            //     <Grid style={{padding:"0px"}}>
-            //         <Col sm={2} xs={2} style={{padding:"0px"}}>    
-            //             <Image style={{padding:"0px"}} src={photo} responsive/>
-            //         </Col>
-            //         <Col sm={9} xs={9} fluid="true" style={{ padding: "0px" }}>
-            //             <ListGroupItem style={{border:'0px'}} header={title}>{artist}</ListGroupItem>
-
-            //         </Col>
-            //     </Grid>
-            // </Panel>
             <Panel style={{ padding: "0px" }} onClick={(e) =>
             {
                 if(clickable) { this.props.onTrackClick(trackInfo.uri) } 

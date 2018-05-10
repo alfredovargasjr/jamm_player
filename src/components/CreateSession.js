@@ -6,7 +6,6 @@ import
     Grid,
     Panel,
     PanelGroup,
-    Form,
     Row,
     Col,
     FormControl,
@@ -44,6 +43,13 @@ var generateRandomString = function (length)
     return text;
 };
 
+/**
+ * Display the tracks of the session's playlist
+ * @param {boolean} bool - proced when available
+ * @param {object list} tracks - list of tracks to be displayed, received from Spotify's API, getPlaylist()
+ * @param {method} handleTrackClick - method to handle onClick of the Track component
+ * @param {boolean} clickable - make the track clickable to the user
+ */
 const displayTracks = (bool, tracks, handleTrackClick, clickable) =>
 {
     console.log("does this appear in displayTracks?", handleTrackClick);
@@ -67,6 +73,9 @@ const displayTracks = (bool, tracks, handleTrackClick, clickable) =>
     return tracksDisplay;
 };
 
+/**
+ * Styling for css
+ */
 const styles = {
     panelDark: {
         backgroundImage: "none",
@@ -86,6 +95,11 @@ const styles = {
     }
 };
 
+/**
+ * Class CreateSession: This is where the Host interacts with the UI
+ *  - react component
+ *  - render upon mounting of component
+ */
 class CreateSession extends React.Component
 {
     // async componentDidMount()
@@ -170,6 +184,10 @@ class CreateSession extends React.Component
 
     }
 
+    /**
+     * Add the passed track uri to the playlist, using Spotify's API
+     * @param {string} trackToAdd 
+     */
     handleTrackClick(trackToAdd)
     {
         console.log(trackToAdd);
@@ -200,7 +218,7 @@ class CreateSession extends React.Component
         return hashParams;
     }
 
-    // - API: call api to get a snapshot of the users profile
+    // Spotify API: call api to get a snapshot of the users profile
     async callApi(headerText)
     {
         console.log(headerText);
@@ -217,7 +235,7 @@ class CreateSession extends React.Component
         console.log(this.state.userData);
     }
 
-    // API: use the API to create a collaborative playlist
+    // Spotify API: use the API to create a collaborative playlist
     async createPlaylist(headerText, name, desc)
     {
         this.setState({ view: 'player' });
@@ -242,7 +260,7 @@ class CreateSession extends React.Component
         console.log(json);
     }
 
-    // - API: return the tracks of a playlist
+    // - Spotify API: return the tracks of a playlist
     async getPlaylistTracks(headerText)
     {
         const response = await fetch(`https://api.spotify.com/v1/users/${this.state.userData.id}/playlists/${this.state.sessionData.id}/tracks`, {
@@ -264,7 +282,7 @@ class CreateSession extends React.Component
         this.setState({ gotTracks: true });
     }
 
-    // - API: search for a track 
+    // - Spotify API: search for a track 
     async searchTrack(headerText, name)
     {
         var uri = encodeURI(name);
@@ -281,7 +299,7 @@ class CreateSession extends React.Component
         this.setState({ gotSearch: true });
     }
 
-    // - API: add a track (uris) to a playlist id
+    // - Spotify API: add a track (uris) to a playlist id
     async addTrackToSession(headerText, trackuri)
     {
         var uri = encodeURI(trackuri);
@@ -297,8 +315,14 @@ class CreateSession extends React.Component
         console.log(json);
     }
 
-    // Graphcool - Using a serverless database for the backend 
-    //  - fetch built-in API calls to the database held by Graphcool 
+    /**
+     * Graphcool - Using a serverless database for the backend
+            - fetch built-in API calls to the database held by Graphcool
+     */
+    
+    // fetch a query of the current session from the database
+    //  - return a JSON of all the content of the session
+    //  - get the tracks that are to be added from the database
     async fetchGraph(graphID)
     {   
         const query = `query getSession($graphID: ID!) {
@@ -317,7 +341,8 @@ class CreateSession extends React.Component
         var tracksToAdd = data.Session.trackses;
         console.log(data.Session.trackses);
         console.log(tracksToAdd);
-        // this.removeTrackGraph("cjgwwohnd0wm301049e8f5yso");
+        //  if tracks are to be added
+        //  - get track info from database then call Spotify's API to add it to the session, then remove it from the database
         if (tracksToAdd.length > 0)
         {
             for (var i in tracksToAdd)
@@ -330,8 +355,10 @@ class CreateSession extends React.Component
         }
     }
     
-    // Graphcool - Using a serverless database for the backend
-    //  - fetch built-in API calls to the database held by Graphcool 
+    /**
+     * set a badge value of the number of tracks in the database to be added to the session
+     * @param {string} graphID 
+     */
     async badgeRequestsGraph(graphID)
     {   
         const query = `query getSession($graphID: ID!) {
@@ -354,7 +381,10 @@ class CreateSession extends React.Component
         this.setState({ requestBadge: tracksToAdd.length });
     }
 
-    // Graphcool - call API to remove a track from the database using its unique ID
+    /**
+     * Remove a track from the database using the track id
+     * @param {string} trackGID 
+     */
     async removeTrackGraph(trackGID)
     {
         const mutation = `mutation delSession($trackGID: ID!) {
@@ -369,7 +399,12 @@ class CreateSession extends React.Component
 
     }
 
-    // Graphcool - call API to create an entry for the Session table in the database
+    /**
+     * Create an instance of a session in the database
+     *  - a JSON is returned with the information created
+     *      - keel the database session id for mutations
+     * @param {*} sessionID 
+     */
     async createSessionGraph(sessionID)
     {
         const mutation = `mutation($sessionID: String!){
@@ -388,6 +423,11 @@ class CreateSession extends React.Component
 
     }
     
+    /**
+     * Render method, part of the React frame work
+     *  - return html to the index file using javascript
+     *  - component gets rerendered whenever tis state changes
+     */
     render()
     { 
         var state = generateRandomString(16);
@@ -396,11 +436,20 @@ class CreateSession extends React.Component
             switch (this.state.view)
             {
                 case 'player':    
+                    /**
+                     * The session window
+                     *  - includes
+                     *      - session banner
+                     *      - the player
+                     *      - add request button
+                     *      - the playlist
+                     *      - and the search window
+                     */    
                     return (
                         <div>
                             <SessionBanner sessionInfo={this.state.sessionData} viewPlayer={true} />
                             <Grid style={{ padding: '30px' }}>
-                                <Row style={{padding: '15px'}}>
+                                <Row style={{ padding: '15px' }}>
                                     <Button bsSize="large" style={{ paddingBottom: '10px' }}
                                         onClick={() =>
                                         {
@@ -452,20 +501,16 @@ class CreateSession extends React.Component
                                             </Grid>
                                         </Panel.Body>
                                     </Panel>
-                                    {/* <Panel eventKey="3">
-                                        <Panel.Heading>
-                                            <Panel.Title toggle>Collapsible Group Item #3</Panel.Title>
-                                        </Panel.Heading>
-                                        <Panel.Body collapsible>
-                                            
-                                        </Panel.Body>
-                                    </Panel> */}
                                 </PanelGroup>
                                 </Row>
                             </Grid>
                         </div>
                     );
                 default:
+                    /**
+                     * The create a session window
+                     *  - gets users inputs to create the session
+                     */    
                     return (
                         <div style={{ backgroundColor: "#ecebe8", height: window.innerHeight, }}>
                             <Grid style={{padding: '30px'}}>
@@ -527,6 +572,10 @@ class CreateSession extends React.Component
             
         } 
 
+        /**
+         * The sign in page for the user to enter their credentials
+         *  - needed to receive a token to use the API
+         */
         return (
             <Grid style={{ padding: '30px' }}>
                 <Jumbotron style={styles.JammJumbo}>
