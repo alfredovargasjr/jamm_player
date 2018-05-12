@@ -2,7 +2,7 @@
   "name": "jamm_project",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://alfredovargasjr.github.io/Jamm_Project/",
+  // "homepage": "https://alfredovargasjr.github.io/Jamm_Project/",
   "dependencies": {
     "apollo-boost": "^0.1.6",
     "apollo-server-express": "^1.3.6",
@@ -35,12 +35,12 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
-  },
-  "devDependencies": {
-    "gh-pages": "^1.1.0",
-    "style-loader": "^0.20.3"
+    "eject": "react-scripts eject"
+    // "predeploy": "npm run build",
+    // "deploy": "gh-pages -d build"
   }
+  // "devDependencies": {
+  //   "gh-pages": "^1.1.0",
+  //   "style-loader": "^0.20.3"
+  // }
 }
