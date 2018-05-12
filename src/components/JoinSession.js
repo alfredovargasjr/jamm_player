@@ -22,7 +22,7 @@ import { request } from 'graphql-request';
 var client_id = 'f18adfa22eb64b1b9a74ce823ca80b3b';
 // Your redirect uri
 // var redirect_uri = 'http://localhost:3000/JoinSession';
-var redirect_uri = 'https://stormy-beach-42276.herokuapp.com/JoinSession';
+var redirect_uri = 'https://jammplayer.herokuapp.com/JoinSession';
 
 //scope for token
 var scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private playlist-read-collaborative playlist-read-private';
