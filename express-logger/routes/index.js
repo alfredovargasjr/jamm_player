@@ -70,4 +70,13 @@ router.post('/joinCode', async (req, res, next) => {
     await res.status(200).json({status: 'ok'});
 });
 
+router.post('/start', async (req, res, next) => {
+    //fs.writeFile('logs', `${req.body.message} - ` + (new Date()));
+    await fs.appendFile('logs', "\n" + "Start task - " + (new Date()), function (err) {
+        if (err) throw err;
+    });
+
+    await res.status(200).json({status: 'ok'});
+});
+
 module.exports = router;
