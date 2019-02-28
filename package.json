@@ -1,0 +1,26 @@
+{
+  "name": "jamm_project",
+  "version": "1.0.0",
+  "private": true,
+  "homepage": "https://alfredovargasjr.github.io/Jamm_Project/",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.4",
+    "debug": "^4.1.1",
+    "querystring": "^0.2.0"
+  },
+  "scripts": {
+    "start": "npm run start-ui & npm run start-logger",
+    "start-ui": "cd jammplayer-ui-1.0; npm start",
+    "start-logger": "cd jammplayer-logger; npm start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "devDependencies": {
+    "gh-pages": "^1.1.0",
+    "style-loader": "^0.20.3"
+  }
+}
