@@ -40,10 +40,30 @@ async function logCreate() {
     await console.log(response);
 };
 
+async function logCreateGray() {
+
+    //fetch('/log');
+    const response = await fetch('http://localhost:3001/creategray', {
+        method: 'POST',
+        body: JSON.stringify({message: ""})
+    });
+    await console.log(response);
+};
+
 async function logJoin() {
 
     //fetch('/log');
     const response = await fetch('http://localhost:3001/join', {
+        method: 'POST',
+        body: JSON.stringify({message: ""})
+    });
+    await console.log(response);
+};
+
+async function logJoinGray() {
+
+    //fetch('/log');
+    const response = await fetch('http://localhost:3001/joingray', {
         method: 'POST',
         body: JSON.stringify({message: ""})
     });
@@ -95,7 +115,7 @@ class Home extends React.Component
                                     </Panel.Heading>
                                     <Panel.Body collapsible>
                                             <LinkContainer to="/CreateSession">
-                                                <Button bsSize="large" block>
+                                                <Button bsSize="large" block onClick={logCreateGray}>
                                                     <h4>Create</h4>
                                                 </Button>
                                             </LinkContainer>
@@ -108,7 +128,7 @@ class Home extends React.Component
                                 </Panel.Heading>
                                     <Panel.Body collapsible>
                                             <LinkContainer to="/JoinSession">
-                                        <Button bsSize="large" block>
+                                        <Button bsSize="large" block onClick={logJoinGray}>
                                                 <h4>Join</h4>
                                         </Button>    
                                             </LinkContainer>

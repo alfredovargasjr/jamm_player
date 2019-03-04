@@ -25,9 +25,27 @@ router.post('/create', async (req, res, next) => {
     await res.status(200).json({status: 'ok'});
 });
 
+router.post('/creategray', async (req, res, next) => {
+    //fs.writeFile('logs', `${req.body.message} - ` + (new Date()));
+    await fs.appendFile('logs', "\n" + "Create Grayz - " + (new Date()), function (err) {
+        if (err) throw err;
+    });
+
+    await res.status(200).json({status: 'ok'});
+});
+
 router.post('/join', async (req, res, next) => {
     //fs.writeFile('logs', `${req.body.message} - ` + (new Date()));
     await fs.appendFile('logs', "\n" + "Join - " + (new Date()), function (err) {
+        if (err) throw err;
+    });
+
+    await res.status(200).json({status: 'ok'});
+});
+
+router.post('/joingray', async (req, res, next) => {
+    //fs.writeFile('logs', `${req.body.message} - ` + (new Date()));
+    await fs.appendFile('logs', "\n" + "Join Gray - " + (new Date()), function (err) {
         if (err) throw err;
     });
 
